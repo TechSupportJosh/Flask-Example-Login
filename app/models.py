@@ -30,7 +30,7 @@ class User(db.Model):
             password = password.encode()
 
         try:
-            hasher.verify(self.password, password.encode())
+            hasher.verify(self.password, password)
 
             # If no exception was raised, then the password was correct. 
             # We need to check whether the hash is still valid before returning true. We can only do this here 
@@ -50,7 +50,9 @@ class User(db.Model):
 class CookieAuth(db.Model):
     __tablename__ = "cookie_auth"
 
-    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
+    cookie_auth_id = Column(Integer, primary_key=True, autoincrement=True)
+    
+    user_id = Column(Integer, ForeignKey("users.user_id"))
 
     auth_token = Column(String(192))
 

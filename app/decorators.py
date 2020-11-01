@@ -3,7 +3,7 @@ from flask import g, request, redirect, url_for, session, flash
 from sqlalchemy import and_
 
 from app import app
-from app.models import CookieAuth, User
+from models import CookieAuth, User
 
 import datetime
 
@@ -42,7 +42,8 @@ def load_user_from_cookie():
             # If a valid auth exists, update g.user to contain the user
             if cookie_auth is not None:
                 g.user = User.query.filter(CookieAuth.user_id == int(user_id)).first()
-
+                g.user_cookie_auth = cookie_auth
+                
         except ValueError:
             # Cookie is of unknown/incorrect format
             pass

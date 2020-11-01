@@ -1,0 +1,9 @@
+<html>
+    <body>
+        {% if user != None %}
+            Hello {{user.username}}! <a href="{{ url_for('logout_page') }}">Log out here.</a>
+        {% else %}
+            You are not logged in, <a href="{{ url_for('login_page') }}">log in here!</a>
+        {% endif %}
+    </body>
+</html>
