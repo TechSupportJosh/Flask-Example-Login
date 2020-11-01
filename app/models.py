@@ -47,16 +47,6 @@ class User(db.Model):
             # Password did not match (or something else went wrong)
             return False
 
-    def verify_auth_token(self, auth_token):
-        """Takes in an auth_token from a browser cookie and returns True/False if the auth_token is valid."""
-        cookie_auths = CookieAuth.query.filter(CookieAuth.user_id == self.user_id).all()
-
-        for cookie_auth in cookie_auths:
-            if compare_digest(cookie_auths.auth_token, auth_token):
-                return True
-        
-        return False
-
 class CookieAuth(db.Model):
     __tablename__ = "cookie_auth"
 
