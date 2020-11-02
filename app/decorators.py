@@ -41,7 +41,7 @@ def load_user_from_cookie():
 
             # If a valid auth exists, update g.user to contain the user
             if cookie_auth is not None:
-                g.user = User.query.filter(CookieAuth.user_id == int(user_id)).first()
+                g.user = User.query.filter(User.user_id == int(user_id)).first()
                 g.user_cookie_auth = cookie_auth
                 
         except ValueError:
