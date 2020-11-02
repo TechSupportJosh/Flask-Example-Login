@@ -4,9 +4,9 @@ Simple repo with boilerplate flask code to provide password authentication.
 This is in no way a fully fleshed out login/register system. There is however:
 - Proper error messages
 - Basic validation on usernames and passwords
+- CSRF Protection
 
 Todo List:
-- CSRF Protection
 - Varying lengths of login (i.e. Remember Me checkbox)
 
 ## Example Docker setup
