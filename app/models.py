@@ -8,6 +8,7 @@ import secrets
 
 class User(db.Model):
     __tablename__ = "users"
+    __table_args__ = {'sqlite_autoincrement': True}
 
     user_id = Column(Integer, primary_key=True, autoincrement=True)
 
@@ -49,6 +50,7 @@ class User(db.Model):
 
 class CookieAuth(db.Model):
     __tablename__ = "cookie_auth"
+    __table_args__ = {'sqlite_autoincrement': True}
 
     cookie_auth_id = Column(Integer, primary_key=True, autoincrement=True)
     
@@ -58,8 +60,17 @@ class CookieAuth(db.Model):
 
     expiry_time = Column(DateTime)
 
-    def __init__(self, user_id, expiry_time):
+    # Note that 512 characters won't always be enough, there's always some weird user agents that can appear...
+    # See https://stackoverflow.com/questions/654921/how-big-can-a-user-agent-string-get
+    user_agent = Column(String(512))
+    
+    # 39 characters for when IPv6 is used
+    ip_address = Column(String(39))
+
+    def __init__(self, user_id, user_agent, ip_address, expiry_time):
         self.user_id = user_id
+        self.user_agent = user_agent
+        self.ip_address = ip_address
         self.expiry_time = expiry_time
 
         # Generate a random auth token of 96 bytes (192 character length)

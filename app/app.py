@@ -45,7 +45,14 @@ def login_page():
         if user.verify_password(password):
             # Password was valid, create a CookieAuth
             expiry_time = datetime.datetime.now() + datetime.timedelta(days=1)
-            cookie = CookieAuth(user.user_id, expiry_time)
+
+            # https://github.com/mattupstate/flask-security/blob/4049c0620383f42d37950c7a35af5ddd6df0540f/flask_security/utils.py#L65
+            if 'X-Forwarded-For' in request.headers:
+                remote_addr = request.headers.getlist("X-Forwarded-For")[0].rpartition(' ')[-1]
+            else:
+                remote_addr = request.remote_addr or 'untrackable'
+
+            cookie = CookieAuth(user.user_id, request.headers.get("User-Agent"), remote_addr, expiry_time)
             db.session.add(cookie)
             db.session.commit()
 
