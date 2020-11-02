@@ -4,8 +4,7 @@ import datetime
 SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///test.db")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-# Use a fixed secret key if desired
-SECRET_KEY = os.urandom(32)
+SECRET_KEY = os.getenv("SECRET_KEY", os.urandom(32))
 
 # Although cookies can be set for only the browser session, there is nothing stopping a user from modifying 
 # the cookie. Therefore, we define an expiry time for session only logins, just to be safe.
