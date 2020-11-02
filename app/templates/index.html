@@ -1,5 +1,14 @@
 <html>
     <body>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
         {% if user != None %}
             Hello {{user.username}}! <a href="{{ url_for('logout_page') }}">Log out here.</a>
         {% else %}

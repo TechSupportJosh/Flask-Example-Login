@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, g, request, redirect, url_for
+from flask import Flask, render_template, g, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 
 # Initialise Flask application and load config
@@ -33,12 +33,14 @@ def login_page():
         password = request.form.get("password", None)
 
         if username is None or password is None:
+            flash("Please provide a username and password!")
             return redirect(request.url)
         
         # Find the user they're attempting to login as
         user = User.query.filter(User.username == username).first()
 
         if user is None:
+            flash("Invalid username or password!")
             return redirect(request.url)
         
         # Check the password
@@ -62,6 +64,7 @@ def login_page():
 
             return response
         else:
+            flash("Invalid username or password!")
             return redirect(request.url)
 
 @app.route("/register", methods=["GET", "POST"])
@@ -74,23 +77,38 @@ def register_page():
         password = request.form.get("password", None)
 
         if username is None or password is None:
+            flash("Please provide a username and password!")
             return redirect(request.url)
         
         # Check no user already exists with this username
         user = User.query.filter(User.username == username).first()
 
         if user is not None:
+            flash("This username is already in use, please try another one!")
             return redirect(request.url)
         
-        # Check their password is at least 6 characters and their username is at least 4 characters
-        if len(password) < 6 or len(username) < 3 or len(username) > 32:
+        # Check their password is at least 6 characters 
+        if len(password) < 6:
+            flash("Please use a password that is 6 characters or longer!")
             return redirect(request.url)
-        
+
+        # and their username is between 4-20 characters
+        if len(username) < 4 or len(username) > 20:
+            flash("Please use a username that is between 4 and 20 characters!")
+            return redirect(request.url)
+
+        # Check username is alphanumeric
+        if not username.isalnum():
+            flash("Please use an alphanumeric username (a-z, A-Z, 0-9 only)!")
+            return redirect(request.url)
+
         # If everything is good, create the user.
         user = User(username, password)
         
         db.session.add(user)
         db.session.commit()
+
+        flash("Account has been created, please log in.")
 
         return redirect(url_for("login_page"))
 
@@ -106,6 +124,8 @@ def logout_page():
 
         # and clear the cookie...
         response.set_cookie("auth", "", max_age=0)
+
+    flash("You have now been logged out.")
 
     # Now redirect to index page
     return response

@@ -1,7 +1,16 @@
 <html>
     <body>
         <h1>Register</h1>
-        <form method="POST">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div>{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/register">
             <p>Username:</p>
             <input name="username" placeholder="Username">
             <p>Password:</p>

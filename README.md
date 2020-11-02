@@ -1,7 +1,13 @@
 # Flask-Example-Login
 Simple repo with boilerplate flask code to provide password authentication.
 
-This is in no way a fully fleshed out login/register system. There is no proper validation on usernames / passwords, no CSRF protection, no proper error messages, etc. 
+This is in no way a fully fleshed out login/register system. There is however:
+- Proper error messages
+- Basic validation on usernames and passwords
+
+Todo List:
+- CSRF Protection
+- Varying lengths of login (i.e. Remember Me checkbox)
 
 ## Example Docker setup
 This repo also features 2 docker-compose files, one for development and one for production. The development one features a temporary sqlite database and exposes on port 5000. The production one uses gunicorn and nginx and exposes on port 80. The production one also uses a persistent database, by sharing a folder on the host to use to contain the database - this database (named `flask_app.db`) will be inside the `db` folder in the root folder of the repo.
