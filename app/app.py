@@ -50,7 +50,9 @@ def login_page():
         # Check the password
         if user.verify_password(password):
             # Password was valid, create a CookieAuth
-            expiry_time = datetime.datetime.now() + datetime.timedelta(days=1)
+
+            session_login = (request.form.get("remember_me", None) is None)
+            expiry_time = datetime.datetime.now() + (app.config["SESSION_AUTH_TIME"] if session_login else app.config["REMEMBER_ME_AUTH_TIME"])
 
             # https://github.com/mattupstate/flask-security/blob/4049c0620383f42d37950c7a35af5ddd6df0540f/flask_security/utils.py#L65
             if 'X-Forwarded-For' in request.headers:
@@ -64,7 +66,7 @@ def login_page():
 
             # Now set the cookie for the response
             response = redirect(url_for("index_page"))
-            response.set_cookie("auth", "{}${}".format(user.user_id, cookie.auth_token), expires=expiry_time)
+            response.set_cookie("auth", "{}${}".format(user.user_id, cookie.auth_token), max_age=(None if session_login else app.config["REMEMBER_ME_AUTH_TIME"]))
 
             return response
         else:
