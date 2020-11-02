@@ -1,11 +1,15 @@
 import datetime
 from flask import Flask, render_template, g, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 # Initialise Flask application and load config
 app = Flask(__name__)
 
 app.config.from_object("config")
+
+# Initialise CSRF protection
+csrf = CSRFProtect(app)
 
 # Initialise database
 db = SQLAlchemy(app)
