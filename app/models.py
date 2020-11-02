@@ -5,6 +5,7 @@ from hmac import compare_digest
 
 import argon2
 import secrets
+import datetime
 
 class User(db.Model):
     __tablename__ = "users"
@@ -75,3 +76,7 @@ class CookieAuth(db.Model):
 
         # Generate a random auth token of 96 bytes (192 character length)
         self.auth_token = secrets.token_hex(96)
+
+    def has_expired(self):
+        """Returns True/False depending on whether this CookieAuth has expired."""
+        return datetime.datetime.now() > self.expiry_time

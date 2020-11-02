@@ -62,6 +62,12 @@ def login_page():
 
             cookie = CookieAuth(user.user_id, request.headers.get("User-Agent"), remote_addr, expiry_time)
             db.session.add(cookie)
+
+            # We'll also wipe old cookie auths for this user
+            for cookie_auth in CookieAuth.query.filter(CookieAuth.user_id == user.user_id).all():
+                if cookie_auth.has_expired():
+                    db.session.delete(cookie_auth)
+
             db.session.commit()
 
             # Now set the cookie for the response
