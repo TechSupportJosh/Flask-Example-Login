@@ -27,23 +27,12 @@ def login_required(f):
 def load_user_from_cookie():
     g.user = None
     
-    # Retrieve the user from the cookie value
-    if (auth_cookie := request.cookies.get("auth", None)) is not None:
-        # Format of our auth token is user_id$auth_token
+    # Retrieve the cookieauth from the session value
+    if "user_id" in session and "auth_id" in session:
+        # Now search for a valid CookieAuth
+        cookie_auth = CookieAuth.query.filter(and_(CookieAuth.user_id == int(session["user_id"]), CookieAuth.cookie_auth_id == session["auth_id"], CookieAuth.expiry_time > datetime.datetime.now())).first()
 
-        try:
-            user_id, auth_token = auth_cookie.split("$")
-
-            # We can safely convert to int() since if they pass an invalid int, it throws ValueError
-
-            # Now search for a valid CookieAuth
-            cookie_auth = CookieAuth.query.filter(and_(CookieAuth.user_id == int(user_id), CookieAuth.auth_token == auth_token, CookieAuth.expiry_time > datetime.datetime.now())).first()
-
-            # If a valid auth exists, update g.user to contain the user
-            if cookie_auth is not None:
-                g.user = User.query.filter(User.user_id == int(user_id)).first()
-                g.user_cookie_auth = cookie_auth
-                
-        except ValueError:
-            # Cookie is of unknown/incorrect format
-            pass
+        # If a valid auth exists, update g.user to contain the user
+        if cookie_auth is not None:
+            g.user = User.query.filter(User.user_id == session["user_id"]).first()
+            g.user_cookie_auth = cookie_auth

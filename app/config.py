@@ -10,4 +10,5 @@ SECRET_KEY = os.getenv("SECRET_KEY", os.urandom(32))
 # the cookie. Therefore, we define an expiry time for session only logins, just to be safe.
 SESSION_AUTH_TIME = datetime.timedelta(days=1)
 # How long should the cookie be valid for when the user selects remember me
-REMEMBER_ME_AUTH_TIME = datetime.timedelta(weeks=16)
+PERMANENT_SESSION_LIFETIME = datetime.timedelta(weeks=16)
+ 

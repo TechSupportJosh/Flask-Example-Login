@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, render_template, g, request, redirect, url_for, flash
+from flask import Flask, render_template, g, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
@@ -71,10 +71,11 @@ def login_page():
             db.session.commit()
 
             # Now set the cookie for the response
-            response = redirect(url_for("index_page"))
-            response.set_cookie("auth", "{}${}".format(user.user_id, cookie.auth_token), max_age=(None if session_login else app.config["REMEMBER_ME_AUTH_TIME"]))
+            session["user_id"] = user.user_id
+            session["auth_id"] = cookie.cookie_auth_id
+            session.permenant = not session_login
 
-            return response
+            return redirect(url_for("index_page"))
         else:
             flash("Invalid username or password!")
             return redirect(request.url)
@@ -126,18 +127,18 @@ def register_page():
 
 @app.route("/logout")
 def logout_page():
-    response = redirect(url_for("index_page"))
-
     # Firstly, check if they're actually logged in
     if g.user is not None:
         # Now revoke the cookie auth they're currently logged in with
         db.session.delete(g.user_cookie_auth)
         db.session.commit()
 
-        # and clear the cookie...
-        response.set_cookie("auth", "", max_age=0)
+        # and clear the session
+        session.permenant = False
+        session.pop("user_id", None)
+        session.pop("auth_id", None)
 
-    flash("You have now been logged out.")
+        flash("You have now been logged out.")
 
     # Now redirect to index page
-    return response
+    return redirect(url_for("index_page"))

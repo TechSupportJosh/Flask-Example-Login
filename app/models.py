@@ -57,8 +57,6 @@ class CookieAuth(db.Model):
     
     user_id = Column(Integer, ForeignKey("users.user_id"))
 
-    auth_token = Column(String(192))
-
     expiry_time = Column(DateTime)
 
     # Note that 512 characters won't always be enough, there's always some weird user agents that can appear...
@@ -73,9 +71,6 @@ class CookieAuth(db.Model):
         self.user_agent = user_agent
         self.ip_address = ip_address
         self.expiry_time = expiry_time
-
-        # Generate a random auth token of 96 bytes (192 character length)
-        self.auth_token = secrets.token_hex(96)
 
     def has_expired(self):
         """Returns True/False depending on whether this CookieAuth has expired."""
